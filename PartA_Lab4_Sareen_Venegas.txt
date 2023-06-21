@@ -1,0 +1,44 @@
+	bic.b #LOCKLPM5, &PM5CTL0
+
+	bis.b #0x0C, &P1DIR
+	bis.b #0x00, &P1OUT
+
+	bis.b #0xBF, &P5DIR
+	bis.b #0x40, &P5REN
+	bis.b #0x40, &P5OUT
+	bis.b #0x00, &P5IN
+
+_pre_loop1:
+	bis.b #0xFF, &P1OUT
+
+_loop1:
+	mov.w #0xF400, R10
+	xor.b #0x08, &P1OUT
+
+_lp1:
+
+	mov.w &P5IN, R11
+	cmp.w #0xFF, R11
+	jeq _pre_loop2
+
+	dec.w R10
+	cmp.w #0x00,R10
+	jne _lp1
+	jmp _loop1
+_pre_loop2:
+	bis.b #0xFF, &P1OUT
+
+_loop2:
+	mov.w #0xF400, R10
+	xor.b #0x04, &P1OUT
+_lp2:
+
+	mov.w &P5IN, R11
+	cmp.w #0xFF, R11
+	jne _pre_loop1
+
+	dec.w R10
+	cmp.w #0x00,R10
+	jne _lp2
+	jmp _loop2
+	nop
